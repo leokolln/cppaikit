@@ -1,0 +1,6 @@
+#pragma once
+
+#define CppAIKit_VERSION_MAJOR @CppAIKit_VERSION_MAJOR@
+#define CppAIKit_VERSION_MINOR @CppAIKit_VERSION_MINOR@
+#define CppAIKit_VERSION_PATCH @CppAIKit_VERSION_PATCH@
+#define CppAIKit_VERSION "@CppAIKit_VERSION@"
