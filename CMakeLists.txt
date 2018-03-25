@@ -4,7 +4,10 @@ project(CppAIKit VERSION 0.0.1 LANGUAGES CXX)
 
 ### Library target creation and source listing
 
-add_library(CppAIKit)
+add_library(CppAIKit
+        src/main.cpp
+        include/cppaikit/fsm/FSM.hpp
+        include/cppaikit/fsm/State.hpp)
 
 target_include_directories(CppAIKit PUBLIC
         $<BUILD_INTERFACE:${CppAIKit_BINARY_DIR}/include>
