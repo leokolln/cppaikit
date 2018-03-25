@@ -35,7 +35,7 @@ endif ()
 ### Options listing
 
 #option(CppAIKit_DOC "Enable doxygen documentation build" ON)
-#option(CppAIKit_EXAMPLE "Enable examples build" ON)
+option(CppAIKit_EXAMPLE "Enable examples build" ON)
 #option(CppAIKit_TEST "Enable tests" ON)
 
 ### Documentation
@@ -47,10 +47,10 @@ endif ()
 
 ### Examples
 
-#if (CppAIKit_EXAMPLE)
-#    message(STATUS "CppAIKit: Examples enabled")
-#    add_subdirectory(examples)
-#endif ()
+if (CppAIKit_EXAMPLE)
+    message(STATUS "CppAIKit: Examples enabled")
+    add_subdirectory(examples)
+endif ()
 
 ### Testing
 
