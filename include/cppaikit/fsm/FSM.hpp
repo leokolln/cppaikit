@@ -131,6 +131,14 @@ class FSM {
   }
 
   /**
+   * Check if the FSM has a current state set.
+   * @return True if there is a current state.
+   */
+  bool hasCurrentState() const {
+    return mCurrentState != nullptr;
+  }
+
+  /**
    * The current state of the FSM.
    * @return Current state of the FSM.
    * @attention The FSM must have a current state that was previously set by either transitionTo() or setCurrentState().
