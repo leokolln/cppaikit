@@ -9,8 +9,6 @@
 
 namespace aikit::fsm {
 
-// TODO Implement previous state and associated methods
-
 /**
  * Implementation for a Finite State Machine.
  * @tparam TId Type for the id of a state. Defaults to std::string.
@@ -43,17 +41,36 @@ class FSM {
 
   /**
    * Remove a state from the FSM.
+   * Removes and destroys the state associated with \a id.
    * @param id Identification of the state being removed.
    * @return Returns true only when a state with associated \a id is found and consequentially removed.
+   * @note If \a id refers to FSM current state, will transition to previous (if any) before removing it.
+   * @note After a transition to previous because \a id refers to current, the previous will be equal to
+   * current (previous state will not be cleared or changed).
+   * @attention If \a id refers to FSM previous state, will clear it before removing and no transition will happen.
+   * @attention If \a id refers to a state that is both current and previous, fsm::State::onExit() will be
+   * called for the state before removing it. Both current and previous will be cleared.
    */
   bool removeState(const TId& id) {
-    if (currentStateId() == id) {
-      mCurrentState = {nullptr, nullptr};
-      // TODO Set current state as previous state if there is one
+    // TODO Test complete behavior of removeState
+    if (mCurrentState.isSet() && (currentStateId() == id)) {
+      if (mPreviousState.isSet()) {
+        if (mCurrentState.id == mPreviousState.id) { // No need to compare values again, just check if point to same
+          mCurrentState.state->onExit();
+          mCurrentState.clear();
+          mPreviousState.clear();
+        } else {
+          transitionToPreviousState();
+          mPreviousState = mCurrentState;
+        }
+      } else {
+        mCurrentState.clear();
+      }
+    } else if (mPreviousState.isSet() && (previousStateId() == id)) {
+      mPreviousState.clear();
     }
 
     return mStates.erase(id) > 0;
-    // FIXME What happens when the state removed is the previous state?
   }
 
   /**
@@ -73,10 +90,22 @@ class FSM {
 
     if (mCurrentState.isSet()) {
       mCurrentState.state->onExit();
+      mPreviousState = mCurrentState;
     }
 
     mCurrentState = {&(found->first), found->second.get()};
     mCurrentState.state->onEnter();
+  }
+
+  /**
+   * Transition to FSM previous state.
+   * @attention The FSM must have a previous state set by consecutive calls to transitionTo() or setCurrentState().
+   * @sa transitionTo()
+   */
+  void transitionToPreviousState() {
+    assert(mPreviousState.isSet()
+               && "No previous state. Check if transitionTo() or setCurrentState() were called more than once");
+    transitionTo(mPreviousState.id);
   }
 
   /**
@@ -97,6 +126,7 @@ class FSM {
    * where calls to fsm::State::onExit() and fsm::State::onEnter() are undesirable.
    * @param id Identification of the state that will be set as current.
    * @note This method can be called even if no previous state was set as current.
+   * @note Previous state will be set with the state currently set (if any).
    * @attention fsm::State::onExit() will not be called for the current state (if any).
    * @attention fsm::State::onEnter() will not be called for the state being set as current.
    * @attention It is required that a state with the associated \a id is found on the FSM.
@@ -105,6 +135,10 @@ class FSM {
     auto found = mStates.find(id);
     assert(found != mStates.end()
                && "No state with informed id was found on the FSM. Check if it was added or if id is incorrect");
+
+    if (mCurrentState.isSet()) {
+      mPreviousState = mCurrentState;
+    }
 
     mCurrentState = {&(found->first), found->second.get()};
   }
@@ -151,6 +185,47 @@ class FSM {
   }
 
   /**
+   * Check if the FSM has a state previously set.
+   * @return True if there is a previous state.
+   */
+  bool hasPreviousState() const {
+    return mPreviousState.isSet();
+  }
+
+  /**
+   * The identification of the previous state of the FSM.
+   * @return Id of the previous state.
+   * @attention The FSM must have a previous state set by consecutive calls to transitionTo() or setCurrentState().
+   */
+  const TId& previousStateId() const {
+    assert(mPreviousState.isSet()
+               && "No previous state. Check if transitionTo() or setCurrentState() were called more than once");
+    return *mPreviousState.id;
+  }
+
+  /**
+   * The previous state of the FSM.
+   * @return Previous state of the FSM.
+   * @attention The FSM must have a previous state set by consecutive calls to transitionTo() or setCurrentState().
+   */
+  const State<TUpdateData>& previousState() const {
+    assert(mPreviousState.isSet()
+               && "No previous state. Check if transitionTo() or setCurrentState() were called more than once");
+    return *mPreviousState.state;
+  }
+
+  /**
+   * The previous state of the FSM.
+   * @return Previous state of the FSM.
+   * @attention The FSM must have a previous state set by consecutive calls to transitionTo() or setCurrentState().
+   */
+  State<TUpdateData>& previousState() {
+    assert(mPreviousState.isSet()
+               && "No previous state. Check if transitionTo() or setCurrentState() were called more than once");
+    return *mPreviousState.state;
+  }
+
+  /**
    * Lists the ids of all states in the FSM.
    * @return List of states ids in the FSM.
    */
@@ -179,9 +254,14 @@ class FSM {
     State<TUpdateData>* state = nullptr; ///< The FSM's current state.
 
     bool isSet() const { return state != nullptr; }
+    void clear() {
+      id = nullptr;
+      state = nullptr;
+    }
   };
 
   std::map<TId, std::unique_ptr<State<TUpdateData>>> mStates; ///< Mapping of states and associated ids.
+  StateRef mPreviousState{};
   StateRef mCurrentState{};
 };
 
