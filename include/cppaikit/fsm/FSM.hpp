@@ -1,19 +1,22 @@
 #pragma once
 
 #include <cassert>
-#include <functional>
 #include <map>
 #include <memory>
-#include <string_view>
+#include <vector>
 
 #include "State.hpp"
 
 namespace aikit::fsm {
 
+// TODO Implement previous state and associated methods
+// TODO Create (or rename) a method to initial state?
+
 /**
  * Implementation for a Finite State Machine.
  * @tparam TId Type for the id of a state. Defaults to std::string.
- * @tparam TUpdateData Type for the data being passed on update() and fsm::State::update().
+ * @tparam TUpdateData Type for the data being passed on update() and fsm::State::update(). Defaults to int.
+ * @sa fsm::State
  */
 template<typename TId = std::string, typename TUpdateData = int>
 class FSM {
@@ -46,6 +49,8 @@ class FSM {
    */
   bool removeState(const TId& id) {
     return mStates.erase(id) > 0;
+    // FIXME What happens when the state removed is the current state?
+    // FIXME What happens when the state removed is the previous state?
   }
 
   /**
@@ -55,6 +60,8 @@ class FSM {
    * @param id Identification of the state that will be transitioned to.
    * @note This method can be called even if no previous state was set as current.
    * @attention It is required that a state with the associated \a id is found on the FSM.
+   * @sa fsm::State::onExit()
+   * @sa fsm::State::onEnter()
    */
   void transitionTo(const TId& id) {
     auto found = mStates.find(id);
@@ -74,6 +81,7 @@ class FSM {
    * Update FSM and it's current state.
    * @param updateData The data that will be passed during the call fsm::State::update() on the current state.
    * @attention The FSM must have a current state that was previously set by either transitionTo() or setCurrentState().
+   * @sa fsm::State::update()
    */
   void update(TUpdateData updateData) {
     assert(mCurrentState != nullptr
@@ -101,7 +109,7 @@ class FSM {
   }
 
   /**
-   * The Id of the current state of the FSM.
+   * The identification of the current state of the FSM.
    * @return Id of the current state.
    * @attention The FSM must have a current state that was previously set by either transitionTo() or setCurrentState().
    */
