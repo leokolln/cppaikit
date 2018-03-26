@@ -48,8 +48,13 @@ class FSM {
    * @return Returns true only when a state with associated \a id is found and consequentially removed.
    */
   bool removeState(const TId& id) {
+    if (currentStateId() == id) {
+      mCurrentStateId = nullptr;
+      mCurrentState = nullptr;
+      // TODO Set current state as previous state if there is one
+    }
+
     return mStates.erase(id) > 0;
-    // FIXME What happens when the state removed is the current state?
     // FIXME What happens when the state removed is the previous state?
   }
 
