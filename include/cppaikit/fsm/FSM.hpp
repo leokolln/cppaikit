@@ -48,8 +48,7 @@ class FSM {
    */
   bool removeState(const TId& id) {
     if (currentStateId() == id) {
-      mCurrentStateId = nullptr;
-      mCurrentState = nullptr;
+      mCurrentState = {nullptr, nullptr};
       // TODO Set current state as previous state if there is one
     }
 
@@ -72,13 +71,12 @@ class FSM {
     assert(found != mStates.end()
                && "No state with informed id was found on the FSM. Check if it was added or if id is incorrect");
 
-    if (mCurrentState != nullptr) {
-      mCurrentState->onExit();
+    if (mCurrentState.isSet()) {
+      mCurrentState.state->onExit();
     }
 
-    mCurrentStateId = &(found->first);
-    mCurrentState = found->second.get();
-    mCurrentState->onEnter();
+    mCurrentState = {&(found->first), found->second.get()};
+    mCurrentState.state->onEnter();
   }
 
   /**
@@ -88,9 +86,9 @@ class FSM {
    * @sa fsm::State::update()
    */
   void update(TUpdateData updateData) {
-    assert(mCurrentState != nullptr
+    assert(mCurrentState.isSet()
                && "The FSM has no current state. Check if transitionTo() or setCurrentState() were called");
-    mCurrentState->update(updateData);
+    mCurrentState.state->update(updateData);
   }
 
   /**
@@ -108,8 +106,15 @@ class FSM {
     assert(found != mStates.end()
                && "No state with informed id was found on the FSM. Check if it was added or if id is incorrect");
 
-    mCurrentStateId = &(found->first);
-    mCurrentState = found->second.get();
+    mCurrentState = {&(found->first), found->second.get()};
+  }
+
+  /**
+   * Check if the FSM has a current state set.
+   * @return True if there is a current state.
+   */
+  bool hasCurrentState() const {
+    return mCurrentState.isSet();
   }
 
   /**
@@ -118,9 +123,9 @@ class FSM {
    * @attention The FSM must have a current state that was previously set by either transitionTo() or setCurrentState().
    */
   const TId& currentStateId() const {
-    assert(mCurrentStateId != nullptr
+    assert(mCurrentState.isSet()
                && "The FSM has no current state. Check if transitionTo() or setCurrentState() were called");
-    return *mCurrentStateId;
+    return *mCurrentState.id;
   }
 
   /**
@@ -129,17 +134,9 @@ class FSM {
    * @attention The FSM must have a current state that was previously set by either transitionTo() or setCurrentState().
    */
   const State<TUpdateData>& currentState() const {
-    assert(mCurrentState != nullptr
+    assert(mCurrentState.isSet()
                && "The FSM has no current state. Check if transitionTo() or setCurrentState() were called");
-    return *mCurrentState;
-  }
-
-  /**
-   * Check if the FSM has a current state set.
-   * @return True if there is a current state.
-   */
-  bool hasCurrentState() const {
-    return mCurrentState != nullptr;
+    return *mCurrentState.state;
   }
 
   /**
@@ -148,9 +145,9 @@ class FSM {
    * @attention The FSM must have a current state that was previously set by either transitionTo() or setCurrentState().
    */
   State<TUpdateData>& currentState() {
-    assert(mCurrentState != nullptr
+    assert(mCurrentState.isSet()
                && "The FSM has no current state. Check if transitionTo() or setCurrentState() were called");
-    return *mCurrentState;
+    return *mCurrentState.state;
   }
 
   /**
@@ -177,9 +174,15 @@ class FSM {
   }
 
  private:
+  struct StateRef {
+    const TId* id = nullptr; ///< The id of the FSM's current state.
+    State<TUpdateData>* state = nullptr; ///< The FSM's current state.
+
+    bool isSet() const { return state != nullptr; }
+  };
+
   std::map<TId, std::unique_ptr<State<TUpdateData>>> mStates; ///< Mapping of states and associated ids.
-  const TId* mCurrentStateId = nullptr; ///< The id of the FSM's current state.
-  State<TUpdateData>* mCurrentState = nullptr; ///< The FSM's current state.
+  StateRef mCurrentState{};
 };
 
 }
