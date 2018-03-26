@@ -10,7 +10,6 @@
 namespace aikit::fsm {
 
 // TODO Implement previous state and associated methods
-// TODO Create (or rename) a method to initial state?
 
 /**
  * Implementation for a Finite State Machine.
