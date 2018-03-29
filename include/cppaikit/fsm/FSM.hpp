@@ -16,11 +16,11 @@ namespace aikit::fsm {
  * @tparam TUpdateData Type for the data being passed on update() and fsm::State::update(). Defaults to int.
  * @sa fsm::State
  */
-template<typename TId = std::string, typename TUpdateData = int>
+template<typename TId = std::string, typename TState = State<int>>
 class FSM {
  public:
   typedef TId Id_type;
-  typedef TUpdateData UpdateData_type;
+  typedef typename TState::UpdateData_type UpdateData_type;
 
   /**
    * Adds a new state to the FSM.
@@ -34,8 +34,8 @@ class FSM {
   template<typename TNewState>
   void addState(TId id, TNewState&& state) {
     using TNewStateNoRef = std::remove_reference_t<TNewState>;
-    static_assert(std::is_base_of_v<State<TUpdateData>, TNewStateNoRef>,
-                  "addState() is only callable with state that is derived from fsm::State<TUpdateData>");
+    static_assert(std::is_base_of_v<TState, TNewStateNoRef>,
+                  "addState() is only callable with state that is derived from TState");
 
     mStates.try_emplace(std::move(id), std::make_unique<TNewStateNoRef>(std::forward<TNewState>(state)));
   }
@@ -115,7 +115,7 @@ class FSM {
    * @attention The FSM must have a current state that was previously set by either transitionTo() or setCurrentState().
    * @sa fsm::State::update()
    */
-  void update(TUpdateData updateData) {
+  void update(UpdateData_type updateData) {
     assert(mCurrentState.isSet()
                && "The FSM has no current state. Check if transitionTo() or setCurrentState() were called");
     mCurrentState.state->update(updateData);
@@ -168,7 +168,7 @@ class FSM {
    * @return Current state of the FSM.
    * @attention The FSM must have a current state that was previously set by either transitionTo() or setCurrentState().
    */
-  const State<TUpdateData>& currentState() const {
+  const TState& currentState() const {
     assert(mCurrentState.isSet()
                && "The FSM has no current state. Check if transitionTo() or setCurrentState() were called");
     return *mCurrentState.state;
@@ -179,7 +179,7 @@ class FSM {
    * @return Current state of the FSM.
    * @attention The FSM must have a current state that was previously set by either transitionTo() or setCurrentState().
    */
-  State<TUpdateData>& currentState() {
+  TState& currentState() {
     assert(mCurrentState.isSet()
                && "The FSM has no current state. Check if transitionTo() or setCurrentState() were called");
     return *mCurrentState.state;
@@ -209,7 +209,7 @@ class FSM {
    * @return Previous state of the FSM.
    * @attention The FSM must have a previous state set by consecutive calls to transitionTo() or setCurrentState().
    */
-  const State<TUpdateData>& previousState() const {
+  const TState& previousState() const {
     assert(mPreviousState.isSet()
                && "No previous state. Check if transitionTo() or setCurrentState() were called more than once");
     return *mPreviousState.state;
@@ -220,7 +220,7 @@ class FSM {
    * @return Previous state of the FSM.
    * @attention The FSM must have a previous state set by consecutive calls to transitionTo() or setCurrentState().
    */
-  State<TUpdateData>& previousState() {
+  TState& previousState() {
     assert(mPreviousState.isSet()
                && "No previous state. Check if transitionTo() or setCurrentState() were called more than once");
     return *mPreviousState.state;
@@ -252,7 +252,7 @@ class FSM {
  private:
   struct StateRef {
     const TId* id = nullptr; ///< The id of the FSM's current state.
-    State<TUpdateData>* state = nullptr; ///< The FSM's current state.
+    TState* state = nullptr; ///< The FSM's current state.
 
     bool isSet() const { return state != nullptr; }
     void clear() {
@@ -261,7 +261,7 @@ class FSM {
     }
   };
 
-  std::map<TId, std::unique_ptr<State<TUpdateData>>> mStates; ///< Mapping of states and associated ids.
+  std::map<TId, std::unique_ptr<TState>> mStates; ///< Mapping of states and associated ids.
   StateRef mPreviousState{};
   StateRef mCurrentState{};
 };
