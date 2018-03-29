@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.9)
 
 project(CppAIKit VERSION 0.0.1 LANGUAGES CXX)
 
+add_subdirectory(deps)
+
 ### Library target creation and source listing
 
 add_library(CppAIKit
@@ -19,8 +21,10 @@ target_include_directories(CppAIKit PUBLIC
 target_compile_features(CppAIKit PUBLIC cxx_std_17)
 
 if (MSVC)
-    target_compile_options(CppAIKit PRIVATE /FAs /W4 /WX)
-    target_compile_options(CppAIKit PRIVATE /wd4309 /wd4324 /wd4389 /wd4127 /wd4267 /wd4146 /wd4201 /wd4464 /wd4514 /wd4701 /wd4820 /wd4365)
+    target_compile_options(CppAIKit PRIVATE
+            /FAs /W4 /WX
+            /wd4309 /wd4324 /wd4389 /wd4127 /wd4267 /wd4146
+            /wd4201 /wd4464 /wd4514 /wd4701 /wd4820 /wd4365)
     target_compile_definitions(CppAIKit PRIVATE _CRT_SECURE_NO_WARNINGS)
 else ()
     target_compile_options(CppAIKit PRIVATE
@@ -36,7 +40,7 @@ endif ()
 
 #option(CppAIKit_DOC "Enable doxygen documentation build" ON)
 option(CppAIKit_EXAMPLE "Enable examples build" ON)
-#option(CppAIKit_TEST "Enable tests" ON)
+option(CppAIKit_TEST "Enable tests" ON)
 
 ### Documentation
 
@@ -54,11 +58,11 @@ endif ()
 
 ### Testing
 
-#if (CppAIKit_TEST)
-#    message(STATUS "CppAIKit: Tests enabled")
-#    enable_testing(true)
-#    add_subdirectory(test)
-#endif()
+if (CppAIKit_TEST)
+    message(STATUS "CppAIKit: Tests enabled")
+    enable_testing(true)
+    add_subdirectory(test)
+endif ()
 
 ### Generate header file with lib version
 
