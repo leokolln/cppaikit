@@ -5,6 +5,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <experimental/memory>
 
 #include "State.hpp"
 
@@ -157,32 +158,24 @@ class FSM {
    * @return Id of the current state.
    * @attention The FSM must have a current state that was previously set by either transitionTo() or setCurrentState().
    */
-  const TId& currentStateId() const {
-    assert(mCurrentState.isSet()
-               && "The FSM has no current state. Check if transitionTo() or setCurrentState() were called");
-    return *mCurrentState.id;
+  std::experimental::observer_ptr<const TId> currentStateId() const {
+    return std::experimental::observer_ptr<const TId>(mCurrentState.id);
   }
 
   /**
    * The current state of the FSM.
-   * @return Current state of the FSM.
-   * @attention The FSM must have a current state that was previously set by either transitionTo() or setCurrentState().
+   * @return Current state of the FSM, can be nullptr if no state is set.
    */
-  const TState& currentState() const {
-    assert(mCurrentState.isSet()
-               && "The FSM has no current state. Check if transitionTo() or setCurrentState() were called");
-    return *mCurrentState.state;
+  std::experimental::observer_ptr<const TState> currentState() const {
+    return mCurrentState.state;
   }
 
   /**
    * The current state of the FSM.
-   * @return Current state of the FSM.
-   * @attention The FSM must have a current state that was previously set by either transitionTo() or setCurrentState().
+   * @return Current state of the FSM, can be nullptr if no state is set.
    */
-  TState& currentState() {
-    assert(mCurrentState.isSet()
-               && "The FSM has no current state. Check if transitionTo() or setCurrentState() were called");
-    return *mCurrentState.state;
+  std::experimental::observer_ptr<TState> currentState() {
+    return mCurrentState.state;
   }
 
   /**
@@ -195,35 +188,26 @@ class FSM {
 
   /**
    * The identification of the previous state of the FSM.
-   * @return Id of the previous state.
-   * @attention The FSM must have a previous state set by consecutive calls to transitionTo() or setCurrentState().
+   * @return Current state of the FSM, can be nullptr if no state is set.
    */
-  const TId& previousStateId() const {
-    assert(mPreviousState.isSet()
-               && "No previous state. Check if transitionTo() or setCurrentState() were called more than once");
-    return *mPreviousState.id;
+  std::experimental::observer_ptr<const TId> previousStateId() const {
+    return mPreviousState.id;
   }
 
   /**
    * The previous state of the FSM.
-   * @return Previous state of the FSM.
-   * @attention The FSM must have a previous state set by consecutive calls to transitionTo() or setCurrentState().
+   * @return Current state of the FSM, can be nullptr if no state is set.
    */
-  const TState& previousState() const {
-    assert(mPreviousState.isSet()
-               && "No previous state. Check if transitionTo() or setCurrentState() were called more than once");
-    return *mPreviousState.state;
+  std::experimental::observer_ptr<const TState> previousState() const {
+    return mPreviousState.state;
   }
 
   /**
    * The previous state of the FSM.
-   * @return Previous state of the FSM.
-   * @attention The FSM must have a previous state set by consecutive calls to transitionTo() or setCurrentState().
+   * @return Current state of the FSM, can be nullptr if no state is set.
    */
-  TState& previousState() {
-    assert(mPreviousState.isSet()
-               && "No previous state. Check if transitionTo() or setCurrentState() were called more than once");
-    return *mPreviousState.state;
+  std::experimental::observer_ptr<TState> previousState() {
+    return mPreviousState.state;
   }
 
   /**

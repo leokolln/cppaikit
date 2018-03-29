@@ -33,7 +33,7 @@ int main(int /*argc*/, const char* /*argv*/[]) {
   fsm.transitionTo("ms1-byReference");
   fsm.update(10);
 
-  std::cout << "Current state: " << fsm.currentStateId() << std::endl;
+  std::cout << "Current state: " << *fsm.currentStateId() << std::endl;
 
   return EXIT_SUCCESS;
 }
