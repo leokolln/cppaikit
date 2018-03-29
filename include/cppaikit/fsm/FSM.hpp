@@ -3,6 +3,7 @@
 #include <cassert>
 #include <map>
 #include <memory>
+#include <string>
 #include <vector>
 
 #include "State.hpp"
