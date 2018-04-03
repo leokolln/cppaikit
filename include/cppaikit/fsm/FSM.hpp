@@ -5,7 +5,6 @@
 #include <memory>
 #include <string>
 #include <vector>
-#include <experimental/memory>
 
 #include "State.hpp"
 
@@ -157,15 +156,15 @@ class FSM {
    * @return Id of the current state.
    * @attention The FSM must have a current state that was previously set by either transitionTo() or setCurrentState().
    */
-  std::experimental::observer_ptr<const TId> currentStateId() const {
-    return std::experimental::observer_ptr<const TId>(mCurrentState.id);
+  const TId* currentStateId() const {
+    return mCurrentState.id;
   }
 
   /**
    * The current state of the FSM.
    * @return Current state of the FSM, can be nullptr if no state is set.
    */
-  std::experimental::observer_ptr<const TState> currentState() const {
+  const TState* currentState() const {
     return mCurrentState.state;
   }
 
@@ -173,7 +172,7 @@ class FSM {
    * The current state of the FSM.
    * @return Current state of the FSM, can be nullptr if no state is set.
    */
-  std::experimental::observer_ptr<TState> currentState() {
+  TState* currentState() {
     return mCurrentState.state;
   }
 
@@ -189,7 +188,7 @@ class FSM {
    * The identification of the previous state of the FSM.
    * @return Current state of the FSM, can be nullptr if no state is set.
    */
-  std::experimental::observer_ptr<const TId> previousStateId() const {
+  const TId* previousStateId() const {
     return mPreviousState.id;
   }
 
@@ -197,7 +196,7 @@ class FSM {
    * The previous state of the FSM.
    * @return Current state of the FSM, can be nullptr if no state is set.
    */
-  std::experimental::observer_ptr<const TState> previousState() const {
+  const TState* previousState() const {
     return mPreviousState.state;
   }
 
@@ -205,7 +204,7 @@ class FSM {
    * The previous state of the FSM.
    * @return Current state of the FSM, can be nullptr if no state is set.
    */
-  std::experimental::observer_ptr<TState> previousState() {
+  TState* previousState() {
     return mPreviousState.state;
   }
 
