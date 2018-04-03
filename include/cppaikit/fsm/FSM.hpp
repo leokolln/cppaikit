@@ -28,8 +28,7 @@ class FSM {
    * The machine will keep a copy of the state that will be destroyed only when it is removed with
    * removeState() or the machine is destroyed.
    * @param id Identification of the state being added, this is used to reference the state in all other methods.
-   * @param state The state being added. It must inherit from the class fsm::State with the
-   * template parameter TUpdateData equal to the FSM.
+   * @param state The state being added. It must inherit from the class fsm::State.
    * @note If any state with equivalent \a id already exists, does nothing.
    */
   template<typename TNewState>

@@ -6,7 +6,6 @@ namespace aikit::fsm {
  * The base class for the state of a Finite State Machine.
  * All state to be used on a FSM should inherit from this class.
  * @tparam TUpdateData Type for the data being passed on update() and fsm::State::update(). Defaults to int.
- * @note The template parameter \a TUpdateData must be the same as the one declared for the FSM.
  * @sa fsm::FSM
  */
 template<typename TUpdateData = int>
