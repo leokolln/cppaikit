@@ -13,7 +13,7 @@ namespace aikit::fsm {
 /**
  * Implementation for a Finite State Machine.
  * @tparam TId Type for the id of a state. Defaults to std::string.
- * @tparam TUpdateData Type for the data being passed on update() and fsm::State::update(). Defaults to int.
+ * @tparam TState Base type for the states managed by the machine. Defaults to fsm::State<int>.
  * @sa fsm::State
  */
 template<typename TId = std::string, typename TState = State<int>>
