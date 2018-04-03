@@ -41,16 +41,16 @@ endif ()
 
 ### Options listing
 
-#option(CppAIKit_DOC "Enable doxygen documentation build" ON)
+option(CppAIKit_DOC "Enable doxygen documentation build" ON)
 option(CppAIKit_EXAMPLE "Enable examples build" ON)
 option(CppAIKit_TEST "Enable tests" ON)
 
 ### Documentation
 
-#if (CppAIKit_DOC)
-#    message(STATUS "CppAIKit: Doxygen documentation enabled")
-#    add_subdirectory(doc)
-#endif ()
+if (CppAIKit_DOC)
+    message(STATUS "CppAIKit: Doxygen documentation enabled")
+    add_subdirectory(docs/doxygen)
+endif ()
 
 ### Examples
 
