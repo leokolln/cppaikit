@@ -232,7 +232,7 @@ class FSM {
     retStates.reserve(mStates.size());
 
     for (const auto& stateMap : mStates) {
-      retStates.emplace_back(&stateMap.second);
+      retStates.emplace_back(stateMap->second.get());
     }
 
     return retStates;
