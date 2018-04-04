@@ -93,7 +93,7 @@ class FSM {
       mPreviousState = mCurrentState;
     }
 
-    mCurrentState = {&(found->first), found->second.get()};
+    mCurrentState = {&found->first, found->second.get()};
     mCurrentState.state->onEnter();
   }
 
@@ -140,7 +140,7 @@ class FSM {
       mPreviousState = mCurrentState;
     }
 
-    mCurrentState = {&(found->first), found->second.get()};
+    mCurrentState = {&found->first, found->second.get()};
   }
 
   /**
