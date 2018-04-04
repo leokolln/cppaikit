@@ -224,6 +224,15 @@ class FSM {
   }
 
   /**
+   * Checks if the FSM has a state with a given id.
+   * @param id The identification of a state.
+   * @return True if the FSM has a state with the given id.
+   */
+  bool hasState(const TId& id) const {
+    return mStates.count(id) > 0;
+  }
+
+  /**
    * Number of states in the FSM.
    * @return The number of states in the FSM.
    */
