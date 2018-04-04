@@ -224,6 +224,21 @@ class FSM {
   }
 
   /**
+   * Lists all the states in the FSM.
+   * @return List of states in the FSM.
+   */
+  std::vector<TState*> states() const {
+    std::vector<TState*> retStates;
+    retStates.reserve(mStates.size());
+
+    for (const auto& stateMap : mStates) {
+      retStates.emplace_back(&stateMap.second);
+    }
+
+    return retStates;
+  }
+
+  /**
    * Checks if the FSM has a state with a given id.
    * @param id The identification of a state.
    * @return True if the FSM has a state with the given id.
