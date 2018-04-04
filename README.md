@@ -15,4 +15,4 @@ http://www.gameaipro.com/GameAIPro/GameAIPro_Chapter06_The_Behavior_Tree_Starter
 * http://riverliu.net/ai/
 
 ## Other
-* Brain icon used on Bitbucket avatar done by: [Freepik](http://www.freepik.com) from https://www.flaticon.com - _CC 3.0 BY_
+* Icon used on Bitbucket avatar done by: [Freepik](http://www.freepik.com) from https://www.flaticon.com - _CC 3.0 BY_
