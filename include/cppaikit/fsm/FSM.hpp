@@ -212,12 +212,12 @@ class FSM {
    * Lists the ids of all states in the FSM.
    * @return List of states ids in the FSM.
    */
-  std::vector<TId> statesIds() const {
-    std::vector<TId> ids;
+  std::vector<TId*> statesIds() const {
+    std::vector<TId*> ids;
     ids.reserve(mStates.size());
 
     for (const auto& stateMap : mStates) {
-      ids.emplace_back(stateMap);
+      ids.emplace_back(&stateMap.first);
     }
 
     return ids;
