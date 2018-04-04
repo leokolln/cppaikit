@@ -13,3 +13,6 @@ Included in the library:
 * http://www.drdobbs.com/hierarchical-state-machine-design-in-c/184402040
 http://www.gameaipro.com/GameAIPro/GameAIPro_Chapter06_The_Behavior_Tree_Starter_Kit.pdf
 * http://riverliu.net/ai/
+
+## Other
+* Brain icon used on Bitbucket avatar done by: [http://www.freepik.com](Freepik) from https://www.flaticon.com - _CC 3.0 BY_
