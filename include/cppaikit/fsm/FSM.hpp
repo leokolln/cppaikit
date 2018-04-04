@@ -53,7 +53,7 @@ class FSM {
    */
   bool removeState(const TId& id) {
     // TODO Test complete behavior of removeState
-    if (mCurrentState.isSet() && (currentStateId() == id)) {
+    if (mCurrentState.isSet() && (*currentStateId() == id)) {
       if (mPreviousState.isSet()) {
         if (mCurrentState.id == mPreviousState.id) { // No need to compare values again, just check if point to same
           mCurrentState.state->onExit();
@@ -66,7 +66,7 @@ class FSM {
       } else {
         mCurrentState.clear();
       }
-    } else if (mPreviousState.isSet() && (previousStateId() == id)) {
+    } else if (mPreviousState.isSet() && (*previousStateId() == id)) {
       mPreviousState.clear();
     }
 
@@ -105,7 +105,7 @@ class FSM {
   void transitionToPreviousState() {
     assert(mPreviousState.isSet()
                && "No previous state. Check if transitionTo() or setCurrentState() were called more than once");
-    transitionTo(mPreviousState.id);
+    transitionTo(*mPreviousState.id);
   }
 
   /**
