@@ -248,6 +248,21 @@ class FSM {
   }
 
   /**
+   * Get the state with the associated id.
+   * @param id The identification of a state.
+   * @return A state with the given id.
+   * @warning Will return nullptr if there is no state with the id.
+   */
+  const TState* getState(const TId& id) const {
+    const auto found = mStates.find(id);
+    if (found != mStates.end()) {
+      return found->second.get();
+    } else {
+      return nullptr;
+    }
+  }
+
+  /**
    * Number of states in the FSM.
    * @return The number of states in the FSM.
    */
@@ -261,6 +276,7 @@ class FSM {
     TState* state = nullptr; ///< The FSM's current state.
 
     bool isSet() const { return state != nullptr; }
+
     void clear() {
       id = nullptr;
       state = nullptr;
