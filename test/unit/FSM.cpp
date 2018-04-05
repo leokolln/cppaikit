@@ -122,8 +122,17 @@ TEST_CASE("Removing states from FSM can change state tracking", "[state_machine]
       }
     }
 
-    SECTION("when there is no previous state set, call onExit() for it before removal") {
+    SECTION("when there is no previous state, call onExit() for the state being removed, current state is cleared") {
+      REQUIRE_FALSE(fsm.hasPreviousState());
+      REQUIRE(eventCounter.timesExited == 0);
+      REQUIRE(eventCounter.timesEntered == 0);
 
+      REQUIRE(fsm.removeState("state1"));
+      REQUIRE(fsm.size() == 3);
+      REQUIRE_FALSE(fsm.hasCurrentState());
+      REQUIRE_FALSE(fsm.hasPreviousState());
+      REQUIRE(eventCounter.timesExited == 1);
+      REQUIRE(eventCounter.timesEntered == 0);
     }
   }
 

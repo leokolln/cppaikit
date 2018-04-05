@@ -44,6 +44,8 @@ class FSM {
    * Removes and destroys the state associated with \a id.
    * @param id Identification of the state being removed.
    * @return Returns true only when a state with associated \a id is found and consequentially removed.
+   * @note If \a id refers to FSM current state and there is no previous state, fsm::State::onExit() will be
+   * called before removing it.
    * @note If \a id refers to FSM current state, will transition to previous (if any) before removing it.
    * @note After a transition to previous because \a id refers to current, the previous will be equal to
    * current (previous state will not be cleared or changed).
@@ -64,6 +66,7 @@ class FSM {
           mPreviousState = mCurrentState;
         }
       } else {
+        mCurrentState.state->onExit();
         mCurrentState.clear();
       }
     } else if (mPreviousState.isSet() && (*previousStateId() == id)) {
