@@ -52,7 +52,7 @@ class FSM {
    * called for the state before removing it. Both current and previous will be cleared.
    */
   bool removeState(const TId& id) {
-    // TODO Test complete behavior of removeState
+    // TODO Reimplement, find first then determine actions if it is current or previous or both
     if (mCurrentState.isSet() && (*currentStateId() == id)) {
       if (mPreviousState.isSet()) {
         if (mCurrentState.id == mPreviousState.id) { // No need to compare values again, just check if point to same
