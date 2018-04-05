@@ -50,6 +50,12 @@ TEST_CASE("FSM can have states added and removed", "[state_machine], [fsm]") {
     REQUIRE(fsm.hasState("state2"));
     REQUIRE(fsm.hasState("state3"));
 
+    SECTION("adding state with existing id is ignored") {
+      fsm.addState("state1", TestState());
+
+      REQUIRE(fsm.size() == 3);
+    }
+
     SECTION("removing states decrease the number of states on the FSM") {
       fsm.removeState("state1");
 
