@@ -165,7 +165,31 @@ TEST_CASE("Removing states from FSM can change state tracking", "[state_machine]
   }
 }
 
-TEST_CASE("FSM is created with no initial state set", "[state_machine], [fsm]") {
+TEST_CASE("FSM can change initial state", "[state_machine], [fsm]") {
+  aikit::fsm::FSM fsm;
+
+  EventCounter eventCounter;
+
+  fsm.addState("state1", TestState(&eventCounter));
+  fsm.addState("state2", TestState(&eventCounter));
+
+  REQUIRE(fsm.size() == 2);
+
+  SECTION("initial state for FSM is undefined even after adding states") {
+    REQUIRE_FALSE(fsm.hasCurrentState());
+  }
+
+  SECTION("initial state can be set") {
+    fsm.setCurrentState("state1");
+
+    REQUIRE(fsm.hasCurrentState());
+    REQUIRE(*fsm.currentStateId() == "state1");
+
+    SECTION("setting initial state does not call events for the state (no transition)") {
+      REQUIRE(eventCounter.timesExited == 0);
+      REQUIRE(eventCounter.timesEntered == 0);
+    }
+  }
 }
 
 TEST_CASE("FSM can transition between states", "[state_machine], [fsm]") {
