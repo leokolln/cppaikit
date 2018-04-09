@@ -190,6 +190,16 @@ TEST_CASE("FSM can change initial state", "[state_machine], [fsm]") {
       REQUIRE(eventCounter.timesEntered == 0);
     }
   }
+
+  SECTION("setting initial state can change previous state") {
+    fsm.setCurrentState("state1");
+
+    REQUIRE_FALSE(fsm.hasPreviousState());
+    REQUIRE(fsm.hasCurrentState());
+
+    fsm.setCurrentState("state2");
+    REQUIRE(fsm.hasPreviousState());
+  }
 }
 
 TEST_CASE("FSM can transition between states", "[state_machine], [fsm]") {
