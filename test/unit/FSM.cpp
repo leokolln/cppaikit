@@ -191,6 +191,10 @@ TEST_CASE("FSM can change initial state", "[state_machine], [fsm]") {
     }
   }
 
+  SECTION("setting initial state change to an invalid one is ignored") {
+    REQUIRE_FALSE(fsm.setCurrentState("notValid"));
+  }
+
   SECTION("setting initial state can change previous state") {
     fsm.setCurrentState("state1");
 

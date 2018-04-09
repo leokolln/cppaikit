@@ -128,22 +128,25 @@ class FSM {
    * This method should be preferably used to define the initial state of the machine or in any other circumstance
    * where calls to fsm::State::onExit() and fsm::State::onEnter() are undesirable.
    * @param id Identification of the state that will be set as current.
+   * @return True if \id was found on the FSM.
    * @note This method can be called even if no previous state was set as current.
    * @note Previous state will be set with the state currently set (if any).
    * @attention fsm::State::onExit() will not be called for the current state (if any).
    * @attention fsm::State::onEnter() will not be called for the state being set as current.
-   * @attention It is required that a state with the associated \a id is found on the FSM.
    */
-  void setCurrentState(const TId& id) {
+  bool setCurrentState(const TId& id) {
     auto found = mStates.find(id);
-    assert(found != mStates.end()
-               && "No state with informed id was found on the FSM. Check if it was added or if id is incorrect");
+    const bool foundStateId = (found != mStates.end());
 
-    if (mCurrentState.isSet()) {
-      mPreviousState = mCurrentState;
+    if (foundStateId) {
+      if (mCurrentState.isSet()) {
+        mPreviousState = mCurrentState;
+      }
+
+      mCurrentState = {&found->first, found->second.get()};
     }
 
-    mCurrentState = {&found->first, found->second.get()};
+    return foundStateId;
   }
 
   /**
