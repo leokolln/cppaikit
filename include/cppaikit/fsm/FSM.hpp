@@ -114,13 +114,13 @@ class FSM {
   /**
    * Update FSM and it's current state.
    * @param updateData The data that will be passed during the call fsm::State::update() on the current state.
-   * @attention The FSM must have a current state that was previously set by either transitionTo() or setCurrentState().
+   * @note If there is no current state, the call is ignored.
    * @sa fsm::State::update()
    */
   void update(UpdateData_type updateData) {
-    assert(mCurrentState.isSet()
-               && "The FSM has no current state. Check if transitionTo() or setCurrentState() were called");
-    mCurrentState.state->update(updateData);
+    if (mCurrentState.isSet()) {
+      mCurrentState.state->update(updateData);
+    }
   }
 
   /**
