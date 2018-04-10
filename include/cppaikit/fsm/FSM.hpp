@@ -55,8 +55,8 @@ class FSM {
    */
   bool removeState(const TId& id) {
     // TODO Reimplement, find first then determine actions if it is current or previous or both
-    if (mCurrentState.isSet() && (*currentStateId() == id)) {
-      if (mPreviousState.isSet()) {
+    if (hasCurrentState() && (*currentStateId() == id)) {
+      if (hasPreviousState()) {
         if (mCurrentState.id == mPreviousState.id) { // No need to compare values again, just check if point to same
           mCurrentState.state->onExit();
           mCurrentState.clear();
@@ -69,7 +69,7 @@ class FSM {
         mCurrentState.state->onExit();
         mCurrentState.clear();
       }
-    } else if (mPreviousState.isSet() && (*previousStateId() == id)) {
+    } else if (hasPreviousState() && (*previousStateId() == id)) {
       mPreviousState.clear();
     }
 
@@ -80,35 +80,46 @@ class FSM {
    * Transition to a state.
    * fsm::State::onExit() will be called for the current state (if any), state with the associated \a id will be set
    * as current and fsm::State::onEnter() will be called on it.
+   * Previous state will be set with the state that was current.
    * @param id Identification of the state that will be transitioned to.
-   * @note This method can be called even if no previous state was set as current.
-   * @attention It is required that a state with the associated \a id is found on the FSM.
+   * @return True if \a id was found on the FSM.
+   * @note If \a id was not found, the call is ignored.
+   * @note The order of operations during transition is: Call fsm::State::onExit() for current
+   * state (if any), set previous state with the current state (if any), set current state with the \a id
+   * state, call fsm::State::onEnter() for the new current state.
    * @sa fsm::State::onExit()
    * @sa fsm::State::onEnter()
    */
-  void transitionTo(const TId& id) {
+  bool transitionTo(const TId& id) {
     auto found = mStates.find(id);
-    assert(found != mStates.end()
-               && "No state with informed id was found on the FSM. Check if it was added or if id is incorrect");
+    const bool foundStateId = (found != mStates.end());
 
-    if (mCurrentState.isSet()) {
-      mCurrentState.state->onExit();
-      mPreviousState = mCurrentState;
+    if (foundStateId) {
+      if (hasCurrentState()) {
+        mCurrentState.state->onExit();
+        mPreviousState = mCurrentState;
+      }
+
+      mCurrentState = {&found->first, found->second.get()};
+      mCurrentState.state->onEnter();
     }
 
-    mCurrentState = {&found->first, found->second.get()};
-    mCurrentState.state->onEnter();
+    return foundStateId;
   }
 
   /**
    * Transition to FSM previous state.
-   * @attention The FSM must have a previous state set by consecutive calls to transitionTo() or setCurrentState().
+   * @return True if there was a previous state to transition to.
+   * @note If there is no previous state, the call is ignored.
    * @sa transitionTo()
    */
-  void transitionToPreviousState() {
-    assert(mPreviousState.isSet()
-               && "No previous state. Check if transitionTo() or setCurrentState() were called more than once");
-    transitionTo(*mPreviousState.id);
+  bool transitionToPreviousState() {
+    const bool hasPrevious = hasPreviousState();
+    if (hasPrevious) {
+      transitionTo(*mPreviousState.id);
+    }
+
+    return hasPrevious;
   }
 
   /**
@@ -118,7 +129,7 @@ class FSM {
    * @sa fsm::State::update()
    */
   void update(UpdateData_type updateData) {
-    if (mCurrentState.isSet()) {
+    if (hasCurrentState()) {
       mCurrentState.state->update(updateData);
     }
   }
@@ -128,7 +139,8 @@ class FSM {
    * This method should be preferably used to define the initial state of the machine or in any other circumstance
    * where calls to fsm::State::onExit() and fsm::State::onEnter() are undesirable.
    * @param id Identification of the state that will be set as current.
-   * @return True if \id was found on the FSM.
+   * @return True if \a id was found on the FSM.
+   * @note If \a id was not found, the call is ignored.
    * @note This method can be called even if no previous state was set as current.
    * @note Previous state will be set with the state currently set (if any).
    * @attention fsm::State::onExit() will not be called for the current state (if any).
