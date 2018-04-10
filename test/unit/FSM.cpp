@@ -165,6 +165,41 @@ TEST_CASE("Removing states from FSM can change state tracking", "[state_machine]
   }
 }
 
+TEST_CASE("FSM can transition between states", "[state_machine], [fsm]") {
+  SECTION("a transition change current state") {
+    SECTION("previous state is changed by successive transitions") {
+    }
+  }
+
+  SECTION("events are called on State during a transition") {
+
+  }
+
+  SECTION("transition to an invalid Id is ignored") {
+
+  }
+}
+
+TEST_CASE("FSM can transition to previous state") {
+  SECTION("transition to previous state updates both current and previous state") {
+
+  }
+
+  SECTION("if there is no previous state, the call is ignored") {
+
+  }
+}
+
+TEST_CASE("FSM can be updated", "[state_machine], [fsm]") {
+  SECTION("update call the update method of the current state") {
+
+  }
+
+  SECTION("call is ignored if FSM has no current state") {
+
+  }
+}
+
 TEST_CASE("FSM can change initial state", "[state_machine], [fsm]") {
   aikit::fsm::FSM fsm;
 
@@ -206,8 +241,6 @@ TEST_CASE("FSM can change initial state", "[state_machine], [fsm]") {
   }
 }
 
-TEST_CASE("FSM can transition between states", "[state_machine], [fsm]") {
-
-}
+// TODO Test auxiliary methods
 
 }
