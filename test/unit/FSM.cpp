@@ -6,7 +6,8 @@ namespace {
 struct EventCounter {
   int timesEntered = 0;
   int timesExited = 0;
-  int timesUpdates = 0;
+  int timesUpdated = 0;
+  int accumulatedUpdates = 0;
 };
 
 class TestState : public aikit::fsm::State<> {
@@ -17,7 +18,12 @@ class TestState : public aikit::fsm::State<> {
 
   void onExit() override { if (mCounter) ++mCounter->timesExited; }
 
-  void update(int updateData) override { if (mCounter) ++mCounter->timesUpdates; }
+  void update(int updateData) override {
+    if (mCounter) {
+      ++mCounter->timesUpdated;
+      mCounter->accumulatedUpdates += updateData;
+    }
+  }
 
   EventCounter* mCounter;
 };
@@ -166,37 +172,188 @@ TEST_CASE("Removing states from FSM can change state tracking", "[state_machine]
 }
 
 TEST_CASE("FSM can transition between states", "[state_machine], [fsm]") {
-  SECTION("a transition change current state") {
+  aikit::fsm::FSM fsm;
+
+  EventCounter eventCounterS1;
+  EventCounter eventCounterS2;
+  EventCounter eventCounterS3;
+
+  fsm.addState("state1", TestState(&eventCounterS1));
+  fsm.addState("state2", TestState(&eventCounterS2));
+  fsm.addState("state3", TestState(&eventCounterS3));
+  REQUIRE_FALSE(fsm.hasPreviousState());
+  REQUIRE_FALSE(fsm.hasCurrentState());
+
+  SECTION("a transition change state tracking") {
+    REQUIRE(fsm.transitionTo("state1"));
+
+    REQUIRE(fsm.hasCurrentState());
+    REQUIRE(*fsm.currentStateId() == "state1");
+    REQUIRE(eventCounterS1.timesExited == 0);
+    REQUIRE(eventCounterS1.timesEntered == 1);
+    REQUIRE(eventCounterS2.timesExited == 0);
+    REQUIRE(eventCounterS2.timesEntered == 0);
+    REQUIRE(eventCounterS3.timesExited == 0);
+    REQUIRE(eventCounterS3.timesEntered == 0);
+
     SECTION("previous state is changed by successive transitions") {
+      REQUIRE_FALSE(fsm.hasPreviousState());
+      REQUIRE(fsm.hasCurrentState());
+
+      REQUIRE(fsm.transitionTo("state2"));
+
+      REQUIRE(fsm.hasPreviousState());
+      REQUIRE(*fsm.previousStateId() == "state1");
+      REQUIRE(*fsm.currentStateId() == "state2");
+
+      REQUIRE(eventCounterS1.timesExited == 1);
+      REQUIRE(eventCounterS1.timesEntered == 1);
+      REQUIRE(eventCounterS2.timesExited == 0);
+      REQUIRE(eventCounterS2.timesEntered == 1);
+      REQUIRE(eventCounterS3.timesExited == 0);
+      REQUIRE(eventCounterS3.timesEntered == 0);
+
+      REQUIRE(fsm.transitionTo("state3"));
+
+      REQUIRE(fsm.hasPreviousState());
+      REQUIRE(*fsm.previousStateId() == "state2");
+      REQUIRE(*fsm.currentStateId() == "state3");
+
+      REQUIRE(eventCounterS1.timesExited == 1);
+      REQUIRE(eventCounterS1.timesEntered == 1);
+      REQUIRE(eventCounterS2.timesExited == 1);
+      REQUIRE(eventCounterS2.timesEntered == 1);
+      REQUIRE(eventCounterS3.timesExited == 0);
+      REQUIRE(eventCounterS3.timesEntered == 1);
     }
   }
 
-  SECTION("events are called on State during a transition") {
+  SECTION("it is allowed to transition to current state") {
+    REQUIRE(fsm.transitionTo("state1"));
 
+    REQUIRE_FALSE(fsm.hasPreviousState());
+    REQUIRE(fsm.hasCurrentState());
+    REQUIRE(*fsm.currentStateId() == "state1");
+    REQUIRE(eventCounterS1.timesExited == 0);
+    REQUIRE(eventCounterS1.timesEntered == 1);
+
+    REQUIRE(fsm.transitionTo("state1"));
+
+    REQUIRE(fsm.hasPreviousState());
+    REQUIRE(fsm.hasCurrentState());
+    REQUIRE(*fsm.previousStateId() == "state1");
+    REQUIRE(*fsm.currentStateId() == "state1");
+    REQUIRE(eventCounterS1.timesExited == 1);
+    REQUIRE(eventCounterS1.timesEntered == 2);
   }
 
-  SECTION("transition to an invalid Id is ignored") {
+  SECTION("transition to an invalid id is ignored") {
+    REQUIRE_FALSE(fsm.transitionTo("stateInvalid"));
 
+    REQUIRE_FALSE(fsm.hasPreviousState());
+    REQUIRE_FALSE(fsm.hasCurrentState());
   }
 }
 
 TEST_CASE("FSM can transition to previous state") {
-  SECTION("transition to previous state updates both current and previous state") {
+  aikit::fsm::FSM fsm;
 
+  EventCounter eventCounterS1;
+  EventCounter eventCounterS2;
+
+  fsm.addState("state1", TestState(&eventCounterS1));
+  fsm.addState("state2", TestState(&eventCounterS2));
+
+  fsm.transitionTo("state1");
+
+  REQUIRE_FALSE(fsm.hasPreviousState());
+  REQUIRE(fsm.hasCurrentState());
+  REQUIRE(*fsm.currentStateId() == "state1");
+  REQUIRE(eventCounterS1.timesExited == 0);
+  REQUIRE(eventCounterS1.timesEntered == 1);
+  REQUIRE(eventCounterS2.timesExited == 0);
+  REQUIRE(eventCounterS2.timesEntered == 0);
+
+  SECTION("transition to previous state updates both current and previous state") {
+    fsm.transitionTo("state2");
+
+    REQUIRE(fsm.hasPreviousState());
+    REQUIRE(fsm.hasCurrentState());
+    REQUIRE(*fsm.currentStateId() == "state2");
+    REQUIRE(*fsm.previousStateId() == "state1");
+    REQUIRE(eventCounterS1.timesExited == 1);
+    REQUIRE(eventCounterS1.timesEntered == 1);
+    REQUIRE(eventCounterS2.timesExited == 0);
+    REQUIRE(eventCounterS2.timesEntered == 1);
+
+    REQUIRE(fsm.transitionToPreviousState());
+
+    REQUIRE(fsm.hasPreviousState());
+    REQUIRE(fsm.hasCurrentState());
+    REQUIRE(*fsm.currentStateId() == "state1");
+    REQUIRE(*fsm.previousStateId() == "state2");
+    REQUIRE(eventCounterS1.timesExited == 1);
+    REQUIRE(eventCounterS1.timesEntered == 2);
+    REQUIRE(eventCounterS2.timesExited == 1);
+    REQUIRE(eventCounterS2.timesEntered == 1);
   }
 
   SECTION("if there is no previous state, the call is ignored") {
+    REQUIRE_FALSE(fsm.transitionToPreviousState());
 
+    REQUIRE_FALSE(fsm.hasPreviousState());
+    REQUIRE(fsm.hasCurrentState());
+    REQUIRE(*fsm.currentStateId() == "state1");
+    REQUIRE(eventCounterS1.timesExited == 0);
+    REQUIRE(eventCounterS1.timesEntered == 1);
+    REQUIRE(eventCounterS2.timesExited == 0);
+    REQUIRE(eventCounterS2.timesEntered == 0);
   }
 }
 
 TEST_CASE("FSM can be updated", "[state_machine], [fsm]") {
-  SECTION("update call the update method of the current state") {
+  aikit::fsm::FSM fsm;
 
+  EventCounter eventCounterS1;
+  EventCounter eventCounterS2;
+
+  fsm.addState("state1", TestState(&eventCounterS1));
+  fsm.addState("state2", TestState(&eventCounterS2));
+
+  REQUIRE_FALSE(fsm.hasPreviousState());
+  REQUIRE_FALSE(fsm.hasCurrentState());
+
+  SECTION("update call the update method of the current state") {
+    fsm.transitionTo("state1");
+    fsm.transitionTo("state2");
+
+    REQUIRE(eventCounterS1.timesUpdated == 0);
+    REQUIRE(eventCounterS2.timesUpdated == 0);
+    REQUIRE(eventCounterS1.accumulatedUpdates == 0);
+    REQUIRE(eventCounterS2.accumulatedUpdates == 0);
+
+    fsm.update(2);
+
+    REQUIRE(eventCounterS1.timesUpdated == 0);
+    REQUIRE(eventCounterS2.timesUpdated == 1);
+    REQUIRE(eventCounterS1.accumulatedUpdates == 0);
+    REQUIRE(eventCounterS2.accumulatedUpdates == 2);
+
+    fsm.update(2);
+    fsm.update(2);
+    REQUIRE(eventCounterS1.timesUpdated == 0);
+    REQUIRE(eventCounterS2.timesUpdated == 3);
+    REQUIRE(eventCounterS1.accumulatedUpdates == 0);
+    REQUIRE(eventCounterS2.accumulatedUpdates == 6);
   }
 
   SECTION("call is ignored if FSM has no current state") {
+    fsm.update(0);
 
+    REQUIRE(eventCounterS1.timesUpdated == 0);
+    REQUIRE(eventCounterS2.timesUpdated == 0);
+    REQUIRE(eventCounterS1.accumulatedUpdates == 0);
+    REQUIRE(eventCounterS2.accumulatedUpdates == 0);
   }
 }
 
