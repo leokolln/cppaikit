@@ -231,8 +231,8 @@ class FSM {
    * @return List of states ids in the FSM.
    * @note There is no specific order of the elements.
    */
-  std::vector<TId*> stateIds() const {
-    std::vector<TId*> ids;
+  std::vector<const TId*> stateIds() const {
+    std::vector<const TId*> ids;
     ids.reserve(mStates.size());
 
     for (const auto& stateMap : mStates) {
@@ -252,7 +252,7 @@ class FSM {
     retStates.reserve(mStates.size());
 
     for (const auto& stateMap : mStates) {
-      retStates.emplace_back(stateMap->second.get());
+      retStates.emplace_back(stateMap.second.get());
     }
 
     return retStates;
