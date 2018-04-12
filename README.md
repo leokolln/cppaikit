@@ -2,7 +2,7 @@
 **C++ Artificial Intelligence Kit** is an open source modern C++ library containing many structures and algorithms needed for the implementation of AI in games and other types of projects.
 
 Included in the library:
-* [ ] FSM (Finite State Machine)
+* [x] FSM (Finite State Machine)
 * [ ] HFSM (Hierarchical Finite State Machine)
 * [ ] NFSM (Nested Finite State Machine, also known as Stacked FSM)
 * [ ] Behavior Tree
