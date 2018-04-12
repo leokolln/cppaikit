@@ -406,24 +406,27 @@ TEST_CASE("FSM can list states and it's ids") {
   fsm.addState("state1", TestState());
   fsm.addState("state2", TestState());
   fsm.addState("state3", TestState());
-  fsm.addState("state4", TestState());
 
   SECTION("get number of states") {
-    REQUIRE(fsm.size() == 4);
+    REQUIRE(fsm.size() == 3);
   }
 
   SECTION("list states") {
     const auto states = fsm.states();
 
-    REQUIRE(states.size() == 4);
+    REQUIRE(states.size() == 3);
     // Test can be improved by testing the returned state objects
   }
 
   SECTION("list ids") {
     const auto stateIds = fsm.stateIds();
 
-    const std::vector<std::string> referenceIds{"state4", "state1", "state2", "state3"};
-    REQUIRE(std::is_permutation(stateIds.begin(), stateIds.end(), referenceIds.begin(), referenceIds.end()));
+    const std::vector<std::string> rIdsVal{"state2", "state1", "state3"};
+    const std::vector<const std::string*> rIds{&rIdsVal[0], &rIdsVal[1], &rIdsVal[2]};
+    REQUIRE(std::is_permutation(rIds.begin(), rIds.end(), stateIds.begin(), stateIds.end(),
+                                [](const auto& first, const auto& second) -> bool {
+                                  return *second == *first;
+                                }));
   }
 
   SECTION("check if a state exists") {
@@ -432,12 +435,16 @@ TEST_CASE("FSM can list states and it's ids") {
   }
 
   SECTION("get state by id") {
+    const auto stateById = fsm.getState("state1");
+
+    REQUIRE(stateById != nullptr);
 
     SECTION("must return nullptr when state with id is not found") {
+      const auto invalidStateById = fsm.getState("stateInvalid");
 
+      REQUIRE(invalidStateById == nullptr);
     }
   }
-
 }
 
 }
