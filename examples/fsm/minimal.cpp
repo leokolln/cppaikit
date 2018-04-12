@@ -3,6 +3,7 @@
 
 #include "cppaikit/fsm/FSM.hpp"
 
+// Define the state class (or classes) to be used on the FSM, they MUST inherit from fsm::State
 class MinimalState1 : public aikit::fsm::State<> {
  public:
   void onEnter() override { std::cout << "MinimalState1: onEnter" << std::endl; }
