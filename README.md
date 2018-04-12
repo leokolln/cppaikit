@@ -1,4 +1,5 @@
-# CppAIKit
+# CppAIKit [![Build Status](https://travis-ci.org/leokolln/cppaikit.svg?branch=master)](https://travis-ci.org/leokolln/cppaikit) [![Coverage Status](https://coveralls.io/repos/github/leokolln/cppaikit/badge.svg?branch=master)](https://coveralls.io/github/leokolln/cppaikit?branch=master)
+
 **C++ Artificial Intelligence Kit** is an open source modern C++ library containing many structures and algorithms needed for the implementation of AI in games and other types of projects.
 
 Included in the library:
