@@ -20,20 +20,6 @@ matrix:
         - COMPILER_CC=gcc-7
         - IS_COVERAGE_BUILD=1
 
-    - os: linux
-      compiler: clang
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-            - llvm-toolchain-precise-5.0
-          packages:
-            - clang++-5.0
-            - clang-5.0
-      env:
-        - COMPILER_CXX=clang++
-        - COMPILER_CC=clang
-
     - os: osx
       osx_image: xcode9.3
       compiler: gcc
