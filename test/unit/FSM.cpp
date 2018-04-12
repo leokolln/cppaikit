@@ -88,7 +88,7 @@ TEST_CASE("Removing states from FSM can change state tracking", "[state_machine]
   REQUIRE(fsm.size() == 4);
 
   SECTION("removing state not found on FSM is ignored") {
-    REQUIRE_FALSE(fsm.removeState("stateNotAdded"));
+    REQUIRE_FALSE(fsm.removeState("stateInvalid"));
     REQUIRE(fsm.size() == 4);
   }
 
