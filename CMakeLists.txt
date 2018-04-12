@@ -41,7 +41,7 @@ endif ()
 
 ### Options listing
 
-option(CppAIKit_DOC "Enable doxygen documentation build" ON)
+option(CppAIKit_DOC "Enable doxygen documentation build" OFF)
 option(CppAIKit_EXAMPLE "Enable examples build" ON)
 option(CppAIKit_TEST "Enable tests" ON)
 
