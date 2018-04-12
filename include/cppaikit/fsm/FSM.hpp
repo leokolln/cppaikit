@@ -180,7 +180,8 @@ class FSM {
 
   /**
    * The current state of the FSM.
-   * @return Current state of the FSM, can be nullptr if no state is set.
+   * @return Current state of the FSM.
+   * @attention Can be nullptr if no state is set.
    */
   const TState* currentState() const {
     return mCurrentState.state;
@@ -188,7 +189,8 @@ class FSM {
 
   /**
    * The current state of the FSM.
-   * @return Current state of the FSM, can be nullptr if no state is set.
+   * @return Current state of the FSM.
+   * @attention Can be nullptr if no state is set.
    */
   TState* currentState() {
     return mCurrentState.state;
@@ -204,7 +206,8 @@ class FSM {
 
   /**
    * The identification of the previous state of the FSM.
-   * @return Current state of the FSM, can be nullptr if no state is set.
+   * @return Current state of the FSM.
+   * @attention Can be nullptr if no state is set.
    */
   const TId* previousStateId() const {
     return mPreviousState.id;
@@ -212,7 +215,8 @@ class FSM {
 
   /**
    * The previous state of the FSM.
-   * @return Current state of the FSM, can be nullptr if no state is set.
+   * @return Current state of the FSM.
+   * @attention Can be nullptr if no state is set.
    */
   const TState* previousState() const {
     return mPreviousState.state;
@@ -220,7 +224,8 @@ class FSM {
 
   /**
    * The previous state of the FSM.
-   * @return Current state of the FSM, can be nullptr if no state is set.
+   * @return Current state of the FSM.
+   * @attention Can be nullptr if no state is set.
    */
   TState* previousState() {
     return mPreviousState.state;
