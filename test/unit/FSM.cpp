@@ -174,7 +174,7 @@ TEST_CASE("Removing states from FSM can change state tracking", "[state_machine]
 }
 
 TEST_CASE("FSM can transition between states", "[state_machine], [fsm]") {
-  aikit::fsm::FSM fsm;
+  aikit::fsm::FSM<> fsm;
 
   EventCounter eventCounterS1;
   EventCounter eventCounterS2;
@@ -258,7 +258,7 @@ TEST_CASE("FSM can transition between states", "[state_machine], [fsm]") {
 }
 
 TEST_CASE("FSM can transition to previous state") {
-  aikit::fsm::FSM fsm;
+  aikit::fsm::FSM<> fsm;
 
   EventCounter eventCounterS1;
   EventCounter eventCounterS2;
@@ -314,7 +314,7 @@ TEST_CASE("FSM can transition to previous state") {
 }
 
 TEST_CASE("FSM can be updated", "[state_machine], [fsm]") {
-  aikit::fsm::FSM fsm;
+  aikit::fsm::FSM<> fsm;
 
   EventCounter eventCounterS1;
   EventCounter eventCounterS2;
@@ -360,7 +360,7 @@ TEST_CASE("FSM can be updated", "[state_machine], [fsm]") {
 }
 
 TEST_CASE("FSM can change initial state", "[state_machine], [fsm]") {
-  aikit::fsm::FSM fsm;
+  aikit::fsm::FSM<> fsm;
 
   EventCounter eventCounter;
 
@@ -401,7 +401,7 @@ TEST_CASE("FSM can change initial state", "[state_machine], [fsm]") {
 }
 
 TEST_CASE("FSM can list states and it's ids") {
-  aikit::fsm::FSM fsm;
+  aikit::fsm::FSM<> fsm;
 
   fsm.addState("state1", TestState());
   fsm.addState("state2", TestState());
