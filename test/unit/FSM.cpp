@@ -1,3 +1,5 @@
+#include <algorithm>
+
 #include <catch/catch.hpp>
 #include <cppaikit/fsm/FSM.hpp>
 
@@ -398,6 +400,44 @@ TEST_CASE("FSM can change initial state", "[state_machine], [fsm]") {
   }
 }
 
-// TODO Test auxiliary methods
+TEST_CASE("FSM can list states and it's ids") {
+  aikit::fsm::FSM fsm;
+
+  fsm.addState("state1", TestState());
+  fsm.addState("state2", TestState());
+  fsm.addState("state3", TestState());
+  fsm.addState("state4", TestState());
+
+  SECTION("get number of states") {
+    REQUIRE(fsm.size() == 4);
+  }
+
+  SECTION("list states") {
+    const auto states = fsm.states();
+
+    REQUIRE(states.size() == 4);
+    // Test can be improved by testing the returned state objects
+  }
+
+  SECTION("list ids") {
+    const auto stateIds = fsm.stateIds();
+
+    const std::vector<std::string> referenceIds{"state4", "state1", "state2", "state3"};
+    REQUIRE(std::is_permutation(stateIds.begin(), stateIds.end(), referenceIds.begin(), referenceIds.end()));
+  }
+
+  SECTION("check if a state exists") {
+    REQUIRE(fsm.hasState("state1"));
+    REQUIRE_FALSE(fsm.hasState("stateInvalid"));
+  }
+
+  SECTION("get state by id") {
+
+    SECTION("must return nullptr when state with id is not found") {
+
+    }
+  }
+
+}
 
 }

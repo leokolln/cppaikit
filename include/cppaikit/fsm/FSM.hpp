@@ -229,8 +229,9 @@ class FSM {
   /**
    * Lists the ids of all states in the FSM.
    * @return List of states ids in the FSM.
+   * @note There is no specific order of the elements.
    */
-  std::vector<TId*> statesIds() const {
+  std::vector<TId*> stateIds() const {
     std::vector<TId*> ids;
     ids.reserve(mStates.size());
 
@@ -244,6 +245,7 @@ class FSM {
   /**
    * Lists all the states in the FSM.
    * @return List of states in the FSM.
+   * @note There is no specific order of the elements.
    */
   std::vector<TState*> states() const {
     std::vector<TState*> retStates;
