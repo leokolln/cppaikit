@@ -172,7 +172,7 @@ class FSM {
   /**
    * The identification of the current state of the FSM.
    * @return Id of the current state.
-   * @attention The FSM must have a current state that was previously set by either transitionTo() or setCurrentState().
+   * @attention Can be nullptr if no state is set.
    */
   const TId* currentStateId() const {
     return mCurrentState.id;
@@ -207,7 +207,7 @@ class FSM {
   /**
    * The identification of the previous state of the FSM.
    * @return Current state of the FSM.
-   * @attention Can be nullptr if no state is set.
+   * @attention Can be nullptr if no previous state is set.
    */
   const TId* previousStateId() const {
     return mPreviousState.id;
@@ -216,7 +216,7 @@ class FSM {
   /**
    * The previous state of the FSM.
    * @return Current state of the FSM.
-   * @attention Can be nullptr if no state is set.
+   * @attention Can be nullptr if no previous state is set.
    */
   const TState* previousState() const {
     return mPreviousState.state;
@@ -225,7 +225,7 @@ class FSM {
   /**
    * The previous state of the FSM.
    * @return Current state of the FSM.
-   * @attention Can be nullptr if no state is set.
+   * @attention Can be nullptr if no previous state is set.
    */
   TState* previousState() {
     return mPreviousState.state;
@@ -264,19 +264,19 @@ class FSM {
   }
 
   /**
-   * Checks if the FSM has a state with a given id.
+   * Checks if the FSM has a state with a given \a id.
    * @param id The identification of a state.
-   * @return True if the FSM has a state with the given id.
+   * @return True if the FSM has a state with \a id.
    */
   bool hasState(const TId& id) const {
     return mStates.count(id) > 0;
   }
 
   /**
-   * Get the state with the associated id.
+   * Get the state with the associated \a id.
    * @param id The identification of a state.
-   * @return A state with the given id.
-   * @warning Will return nullptr if there is no state with the id.
+   * @return A state with the given \a id.
+   * @warning Will return nullptr if there is no state with \a id.
    */
   const TState* getState(const TId& id) const {
     const auto found = mStates.find(id);
@@ -297,8 +297,8 @@ class FSM {
 
  private:
   struct StateRef {
-    const TId* id = nullptr; ///< The id of the FSM's current state.
-    TState* state = nullptr; ///< The FSM's current state.
+    const TId* id = nullptr; ///< State id of a FSM.
+    TState* state = nullptr; ///< State of a FSM.
 
     bool isSet() const { return state != nullptr; }
 
