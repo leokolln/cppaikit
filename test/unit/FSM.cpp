@@ -31,7 +31,7 @@ class TestState : public aikit::fsm::State<> {
 };
 
 TEST_CASE("FSM can have states added and removed", "[state_machine], [fsm]") {
-  aikit::fsm::FSM fsm;
+  aikit::fsm::FSM<> fsm;
 
   REQUIRE(fsm.size() == 0);
 
@@ -76,7 +76,7 @@ TEST_CASE("FSM can have states added and removed", "[state_machine], [fsm]") {
 }
 
 TEST_CASE("Removing states from FSM can change state tracking", "[state_machine], [fsm]") {
-  aikit::fsm::FSM fsm;
+  aikit::fsm::FSM<> fsm;
 
   EventCounter eventCounter;
 
