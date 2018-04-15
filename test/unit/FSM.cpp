@@ -16,9 +16,19 @@ class TestState : public aikit::fsm::State<> {
  public:
   explicit TestState(EventCounter* counter = nullptr) : mCounter(counter) {}
 
-  void onEnter() override { if (mCounter) ++mCounter->timesEntered; }
+  void onEnter() override {
+    aikit::fsm::State<>::onEnter(); // Not needed, only to avoid misreport during code coverage analysis.
+    if (mCounter) {
+      ++mCounter->timesEntered;
+    }
+  }
 
-  void onExit() override { if (mCounter) ++mCounter->timesExited; }
+  void onExit() override {
+    aikit::fsm::State<>::onExit(); // Not needed, only to avoid misreport during code coverage analysis.
+    if (mCounter) {
+      ++mCounter->timesExited;
+    }
+  }
 
   void update(int updateData) override {
     if (mCounter) {
