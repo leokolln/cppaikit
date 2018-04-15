@@ -2,4 +2,4 @@
 
 uname -a
 cmake --version
-gcov --version
+$COMPILER --version

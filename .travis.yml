@@ -2,7 +2,8 @@ language: cpp
 
 env:
   global:
-    - IS_COVERAGE_BUILD=0
+    # encrypted COVERITY_SCAN_TOKEN using the project repo's public key
+    - secure: "aDC/JAR113jOx++hoIRvfZ7eyMqjoWb3ucAQHIMzUxATQl4EPcURJymfZlKgd2MgyXE/HDx2TiXCUPe3fYiUreb087Mu4m0A/xWg29nX2yFA2EADPD+OvgRWHZU05XmTpiZ2thWF1mleN+uvDMkoQEcWuiW66looUreNc1V2OLeO2mE+F06nzvgTkTAMA0TGCsPVuK/wdGA/SJJJbrGuS+zJwogo97wEQdkpzDN69aomDEJVOyaY5zzP1uVXO5DvctNZvfsAI0o44OjLpWdz33cmsG4NeHNNrui47X/RDpJlg8j4KnootHviJg/2qhjBpe0o1ue9/1UZ0zfC9syFvNRxegL/XXHON74C4AJdLLG97DAnYZHFvXoLrQgS7d2ZUMyhUEY85m2+yIFOpjUarAKEqltvBr6pnTG+J9KDKly+PU297QETVevxAGyuSjhJcxlTSYDfiNYkM6QXtVloGPHbu5/M93GPlKWZ4Gy4S3sTsJWHnZtw2o6Xasfplh5O68ZiaxASju35lQhKzjJ8pleora3Gx0ZK116J0kr5hAb72FSCt7D2BYoVaQjlvJ3N4Ez6PyEBlkwppHWWUlHRBivLvu/aj8qYsmNTG9/iYNty9Hl7dCBblpKuO/ud1ZmmU1YJYIEPm1DDxH0btETQ1RlMXEa91Ir8tk/E7D12W3I="
 
 matrix:
   include:
@@ -15,29 +16,33 @@ matrix:
           packages:
             - g++-7
             - gcc-7
+        coverity_scan:
+          project:
+            name: "leokolln/cppaikit"
+            description: "C++ Artificial Intelligence Kit - Library for AI implementation in games and other projects."
+          notification_email: leokolln@gmail.com
+          build_command_prepend: "mkdir build_coverity && cd build_coverity && cmake .."
+          build_command: "cmake --build ."
+          branch_pattern: coverity_scan
       env:
-        - COMPILER_CXX=g++-7
-        - COMPILER_CC=gcc-7
+        - COMPILER=g++-7
         - IS_COVERAGE_BUILD=1
 
     - os: osx
       osx_image: xcode9.3
       compiler: gcc
-      env:
-        - COMPILER_CXX=g++
-        - COMPILER_CC=gcc
+      env: COMPILER=g++
 
     - os: osx
       osx_image: xcode9.3
       compiler: clang
-      env:
-        - COMPILER_CXX=clang++
-        - COMPILER_CC=clang
+      env: COMPILER=clang++
 
 sudo: required
 dist: trusty
 
 before_install:
+  - echo -n | openssl s_client -connect https://scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
   - chmod +x ci/*
   - source ci/travis-environment.sh
   - ci/travis-before-install.sh
