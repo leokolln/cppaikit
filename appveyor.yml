@@ -23,7 +23,8 @@ build_script:
 test_script:
   - ps: |
       cd build/test/unit
-      .\CppAIKit-test -s -r junit -o junit_test_results.xml
+      ls
+      .\CppAIKit-test.exe -s -r junit -o junit_test_results.xml
       $wc = New-Object 'System.Net.WebClient'
       $wc.UploadFile("https://ci.appveyor.com/api/testresults/junit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path .\junit_test_results.xml))
 
