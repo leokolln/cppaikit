@@ -17,12 +17,12 @@ init:
   - cmd: msbuild /version
 
 build_script:
-  - cmd: cmake -H. -Bbuild -A %platform%
-  - cmd: cmake --build build --config %configuration%
+  - cmd: cmake -H. -Bbuild -A %PLATFORM%
+  - cmd: cmake --build build --config %CONFIGURATION%
 
 test_script:
   - ps: |
-      cd build/test/unit/%configuration%
+      cd build/test/unit/$($env:CONFIGURATION)
       ls
       .\CppAIKit-test.exe -s -r junit -o junit_test_results.xml
       $wc = New-Object 'System.Net.WebClient'
