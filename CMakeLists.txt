@@ -9,35 +9,14 @@ add_subdirectory(deps)
 
 ### Library target creation and source listing
 
-add_library(CppAIKit
-        src/main.cpp
-        include/cppaikit/fsm/FSM.hpp
-        include/cppaikit/fsm/State.hpp)
+add_library(CppAIKit INTERFACE)
 
-target_include_directories(CppAIKit PUBLIC
+target_include_directories(CppAIKit INTERFACE
         $<BUILD_INTERFACE:${CppAIKit_BINARY_DIR}/include>
         $<BUILD_INTERFACE:${CppAIKit_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:include>)
 
-### Compilation options, features and definitions
-
-target_compile_features(CppAIKit PUBLIC cxx_std_17)
-
-if (MSVC)
-    target_compile_options(CppAIKit PRIVATE
-            /FAs /W4 /WX
-            /wd4309 /wd4324 /wd4389 /wd4127 /wd4267 /wd4146
-            /wd4201 /wd4464 /wd4514 /wd4701 /wd4820 /wd4365)
-    target_compile_definitions(CppAIKit PRIVATE _CRT_SECURE_NO_WARNINGS)
-else ()
-    target_compile_options(CppAIKit PRIVATE
-            -Wall -Wextra -Wpedantic
-            -Wcast-align -Wconversion -Wold-style-cast -Wsign-conversion
-            -Wredundant-decls -Wunused -Wno-missing-braces -Wshadow
-            -Woverloaded-virtual -Wctor-dtor-privacy -Wnon-virtual-dtor
-            -Winit-self -Werror=return-type -Wmissing-declarations -Wzero-as-null-pointer-constant -Wdouble-promotion
-            -fno-exceptions -fno-strict-aliasing -fvisibility=hidden)
-endif ()
+target_compile_features(CppAIKit INTERFACE cxx_std_17)
 
 ### Options listing
 
@@ -66,12 +45,6 @@ if (CppAIKit_TEST)
     enable_testing(true)
     add_subdirectory(test)
 endif ()
-
-### Generate header file with lib version
-
-configure_file(
-        "${PROJECT_SOURCE_DIR}/include/cppaikit/Config.hpp.in"
-        "${PROJECT_BINARY_DIR}/include/cppaikit/Config.hpp")
 
 ### Export library interface
 
