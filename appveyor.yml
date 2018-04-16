@@ -17,13 +17,15 @@ init:
   - cmd: msbuild /version
 
 build_script:
-  - cmd: md build
-  - cmd: cd build
-  - cmd: cmake -A %platform% ..
-  - cmd: cmake --build . --config %configuration%
+  - cmd: cmake -H. -Bbuild -A %platform%
+  - cmd: cmake --build build --config %configuration%
 
 test_script:
-  - cmd: ctest -C %configuration% -V --output-on-failure
+  - ps: |
+      cd build/test/unit
+      CppAIKit-test -s -r junit -o junit_test_results.xml
+      $wc = New-Object 'System.Net.WebClient'
+      $wc.UploadFile("https://ci.appveyor.com/api/testresults/junit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path .\junit_test_results.xml))
 
 only_commits:
   files:
