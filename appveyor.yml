@@ -22,7 +22,7 @@ build_script:
 
 test_script:
   - ps: |
-      cd build/test/unit
+      cd build/test/unit/%configuration%
       ls
       .\CppAIKit-test.exe -s -r junit -o junit_test_results.xml
       $wc = New-Object 'System.Net.WebClient'
