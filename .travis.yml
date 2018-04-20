@@ -21,7 +21,7 @@ matrix:
             name: "leokolln/cppaikit"
             description: "C++ Artificial Intelligence Kit - Library for AI implementation in games and other projects."
           notification_email: leokolln@gmail.com
-          build_command_prepend: "cmake -H. -Bbuild -DCMAKE_CXX_COMPILER=$COMPILER"
+          build_command_prepend: "cov-configure --comptype gcc --compiler $COMPILER --template; cmake -H. -Bbuild -DCMAKE_CXX_COMPILER=$COMPILER"
           build_command: "cmake --build build"
           branch_pattern: coverity_scan
       env:

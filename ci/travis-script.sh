@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 if [ "$COVERITY_SCAN_BRANCH" == 1 ]; then
-  cat build/cov-int/scm_log.txt
+  cat /home/travis/build/leokolln/cppaikit/cov-int/scm_log.txt
   exit
 fi
 
