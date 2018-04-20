@@ -1,0 +1,2 @@
+EXCLUDE = ci deps examples test
+FILE_PATTERNS = *.hpp *.cpp *.md
