@@ -16,6 +16,10 @@ target_include_directories(CppAIKit INTERFACE
         $<BUILD_INTERFACE:${CppAIKit_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:include>)
 
+configure_file(
+        "${CppAIKit_SOURCE_DIR}/include/cppaikit/Config.hpp.in"
+        "${CppAIKit_BINARY_DIR}/include/cppaikit/Config.hpp")
+
 target_compile_features(CppAIKit INTERFACE cxx_std_17)
 
 ### Options listing
