@@ -1,2 +1,8 @@
 .idea/
 cmake-build-*/
+
+# Build
+**/build
+
+# User cached cmake configurations
+**/CMakeLists.txt.user

@@ -1,0 +1,6 @@
+#pragma once
+
+constexpr auto CppAIKit_VERSION_MAJOR = ${CppAIKit_VERSION_MAJOR};
+constexpr auto CppAIKit_VERSION_MINOR = ${CppAIKit_VERSION_MINOR};
+constexpr auto CppAIKit_VERSION_PATCH = ${CppAIKit_VERSION_PATCH};
+constexpr auto CppAIKit_VERSION = "${CppAIKit_VERSION_MAJOR}.${CppAIKit_VERSION_MINOR}.${CppAIKit_VERSION_PATCH}";
